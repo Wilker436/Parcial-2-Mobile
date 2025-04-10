@@ -1,0 +1,92 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonButton, IonList, IonInput, IonIcon, IonTabButton, IonText } from '@ionic/angular/standalone';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { Router } from '@angular/router';
+import { LoginData } from '../../interfaces/user.interface';
+
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.page.html',
+  styleUrls: ['./login.page.scss'],
+  standalone: true,
+  imports: [IonText, IonIcon, IonList, IonButton, IonLabel, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule, IonInput ]
+})
+
+export class LoginPage implements OnInit {
+
+  errorMessage: string | null = null;
+  // isLoading = false; // Opcional, si luego quieres mostrar un spinner
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {}
+
+  form = new FormGroup({
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', Validators.required),
+  });
+
+  onSubmit() {
+    if (this.form.valid) {
+      this.errorMessage = null; // Limpiar errores previos
+      const credentials = this.form.value as LoginData;
+
+      this.authService.logIn(credentials)
+        .then(() => {
+          this.router.navigate(['/home']);
+        })
+        .catch(error => {
+          console.error('Error en el login', error);
+          this.errorMessage = this.getErrorMessage(error.code);
+        });
+    }
+  }
+
+  loginWithGoogle() {
+    this.authService.logInGoogle()
+      .then(async (result) => {
+        const user = result.user;
+        const uid = user.uid;
+  
+        // Consultar si ya existe el perfil del usuario en Firestore
+        const userDoc = await this.authService.getUserProfile(uid);
+  
+        if (!userDoc.exists()) {
+          // Si no existe, redirigir al formulario de completar perfil
+          this.router.navigate(['/complete-profile']);
+        } else {
+          // Si existe, ir al home
+          this.router.navigate(['/home']);
+        }
+      })
+      .catch(error => console.error('Error con login de Google', error));
+  }
+  
+
+  goToRegister(){
+    this.router.navigate(['/register']);
+   }
+
+
+  private getErrorMessage(code: string): string {
+    switch (code) {
+      case 'auth/invalid-email':
+        return 'El correo no es válido.';
+      case 'auth/user-disabled':
+        return 'Este usuario ha sido deshabilitado.';
+      case 'auth/user-not-found':
+        return 'No existe ninguna cuenta con este correo.';
+      case 'auth/wrong-password':
+        return 'Contraseña incorrecta.';
+      default:
+        return 'Error al iniciar sesión. Intenta nuevamente.';
+    }
+  }
+}
+
