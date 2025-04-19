@@ -17,6 +17,7 @@ export class CompleteProfilePage implements OnInit {
   profileForm: FormGroup<{
     firstname: FormControl<string>;
     phone: FormControl<string>;
+    picture: FormControl<string>;
   }>;
 
   constructor(
@@ -27,6 +28,7 @@ export class CompleteProfilePage implements OnInit {
     this.profileForm = this.fb.group({
       firstname: this.fb.control('', Validators.required),
       phone: this.fb.control('', Validators.required),
+      picture: this.fb.control(''),
     });
   }
 

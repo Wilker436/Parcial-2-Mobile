@@ -4,7 +4,7 @@ export interface User {
     password: string;
     firstname: string;
     phone: string;
-
+    picture?: string;
 }
 
 export interface LoginData {

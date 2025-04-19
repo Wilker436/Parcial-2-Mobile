@@ -4,21 +4,21 @@ import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonIcon, IonFabList, IonFabButton } from '@ionic/angular/standalone';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Router } from '@angular/router';
-
+import { CardContactComponent } from 'src/app/component/card-contact/card-contact.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonFabButton, IonFabList, IonIcon, IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [IonFabButton, IonFabList, IonIcon, IonFab, IonContent, CommonModule, FormsModule, CardContactComponent]
 })
 export class HomePage implements OnInit {
+
 
   constructor(
     private authSerive: AuthService,
     private Router: Router,
-
   ) { }
 
   ngOnInit() {
@@ -33,7 +33,7 @@ export class HomePage implements OnInit {
   }
 
   addContact(){
-
+    this.Router.navigate(['/add-contact']);
   }
 
 }

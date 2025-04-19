@@ -1,5 +1,75 @@
-.error-message {
-    margin: 16px;
-    text-align: center;
+.login-content {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  --background: linear-gradient(135deg, #a7d0ff, #1f1f4b);
+}
+
+
+
+/* Contenedor del formulario */
+.login-container {
+  width: 100%;
+  height: 100vh;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  transform: scale(0.95);
+  animation: zoomIn 1s ease-out forwards;
+}
+
+@keyframes zoomIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
-  
+}
+
+/* Formulario */
+.login-form {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 500px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2% 5% 4% 5%;
+}
+
+/* Botones */
+ion-button {
+  margin-top: 8px;
+}
+
+/* Google login separado visualmente */
+.google-login ion-button {
+  --background: #4285f4;
+  color: white;
+  margin-top: 8px;
+}
+
+.google-login ion-icon {
+  margin-left: 8px;
+}
+
+/* Mensaje de error */
+.error-message {
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* Responsividad extra */
+@media (max-width: 500px) {
+  .login-container {
+    padding: 16px;
+    border-radius: 8px;
+  }
+}

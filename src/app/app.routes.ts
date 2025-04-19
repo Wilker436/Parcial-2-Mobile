@@ -22,6 +22,7 @@ export const routes: Routes = [
   },
   {
     path: 'add-contact',
+    canActivate: [authGuard],
     loadComponent: () => import('./pages/add-contact/add-contact.page').then( m => m.AddContactPage)
   },
   {

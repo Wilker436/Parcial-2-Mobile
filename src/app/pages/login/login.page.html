@@ -1,42 +1,48 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>login</ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content [fullscreen]="true">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ion-list>
-      <ion-item>
-        <ion-label position="floating">Email</ion-label>
-        <ion-input formControlName="email" type="email"></ion-input>
-      </ion-item>
+<ion-content [fullscreen]="true" class="login-content">
 
-      <ion-item>
-        <ion-label position="floating">Password</ion-label>
-        <ion-input formControlName="password" type="password"></ion-input>
-      </ion-item>
-    </ion-list>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
 
-    <ion-button type="submit" expand="block">Iniciar sesión</ion-button>
-  </form>
 
-  <!-- Mensaje de error -->
-  <div *ngIf="errorMessage" class="error-message">
-    <ion-text color="danger">
-      {{ errorMessage }}
-    </ion-text>
+  <div class="login-container">
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+      <h1>Iniciar sesión</h1>
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">Email</ion-label>
+          <ion-input formControlName="email" type="email"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Password</ion-label>
+          <ion-input formControlName="password" type="password"></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <ion-button type="submit" expand="block">Iniciar sesión</ion-button>
+
+      <!-- Mensaje de error -->
+      <div *ngIf="errorMessage" class="error-message">
+        <ion-text color="danger">
+          {{ errorMessage }}
+        </ion-text>
+      </div>
+
+      <ion-button expand="block" fill="clear" (click)="goToRegister()">
+        Registrarse
+      </ion-button>
+
+      <div class="google-login">
+        <ion-button expand="block" (click)="loginWithGoogle()">
+          Login con Google
+          <ion-icon name="logo-google" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+    </form>
   </div>
-
-  <div class="google">
-    <ion-button expand="block" (click)="loginWithGoogle()">
-      Login con Google  
-      <ion-icon name="logo-google"></ion-icon>
-    </ion-button>
-  </div>
-
-  <ion-button expand="block" fill="clear" (click)="goToRegister()">
-    Registrarse
-  </ion-button>
 </ion-content>
-

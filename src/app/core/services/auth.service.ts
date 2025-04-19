@@ -48,7 +48,8 @@ export class AuthService {
         uid: userCredential.user.uid,
         email: user.email,
         firstname: user.firstname,
-        phone: user.phone
+        phone: user.phone,
+        picture: user.picture ?? 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8t5Qv9hoArKjwgA25zZgoNoKuhbVU2zc6-A&s'
       };
 
       // Guardamos en Firestore bajo la colección "users"

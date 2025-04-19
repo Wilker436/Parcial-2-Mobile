@@ -29,6 +29,7 @@ export class RegisterPage implements OnInit {
   password: new FormControl('', Validators.required),
   firstname: new FormControl('', Validators.required),
   phone: new FormControl('', Validators.required),
+  picture: new FormControl(''),
 
  });
 
@@ -40,7 +41,8 @@ export class RegisterPage implements OnInit {
       email: formValue.email ?? '',
       password: formValue.password ?? '',
       firstname: formValue.firstname ?? '',
-      phone: formValue.phone ?? ''
+      phone: formValue.phone ?? '',
+      picture: formValue.picture ?? undefined
     };
 
     this.authService.register(user).then(() => {

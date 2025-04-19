@@ -35,3 +35,71 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 /* @import '@ionic/angular/css/palettes/dark.system.css'; */
+/* Burbujas */
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: floatBubble infinite ease-in-out;
+    opacity: 0.6;
+    z-index: 0;
+  }
+  
+  /* Configuración individual de cada burbuja */
+  .bubble:nth-child(1) {
+    width: 150px;
+    height: 150px;
+    top: 10%;
+    left: 15%;
+    animation-duration: 8s;
+    animation-delay: 0s;
+  }
+  
+  .bubble:nth-child(2) {
+    width: 200px;
+    height: 200px;
+    top: 60%;
+    left: 25%;
+    animation-duration: 12s;
+    animation-delay: 2s;
+  }
+  
+  .bubble:nth-child(3) {
+    width: 100px;
+    height: 100px;
+    top: 30%;
+    right: 20%;
+    animation-duration: 10s;
+    animation-delay: 1s;
+  }
+  
+  .bubble:nth-child(4) {
+    width: 180px;
+    height: 180px;
+    bottom: 20%;
+    left: 50%;
+    animation-duration: 14s;
+    animation-delay: 3s;
+  }
+  
+  .bubble:nth-child(5) {
+    width: 120px;
+    height: 120px;
+    bottom: 30%;
+    right: 10%;
+    animation-duration: 9s;
+    animation-delay: 4s;
+  }
+  
+  /* Animación de flotación */
+  @keyframes floatBubble {
+    0% {
+      transform: translateY(0) translateX(0);
+    }
+    50% {
+      transform: translateY(-30px) translateX(20px);
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+    }
+  }

@@ -1,17 +1,32 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>home</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="home-content">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">home</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <!-- Burbujas de fondo -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
 
+  <div class="home-container">
+    <div class="home-container-bg"></div> <!-- Fondo glassmorphism -->
+  
+    <div class="home-container-content"> <!-- Contenido por delante -->
+      <h1>Bienvenido a tu página de inicio</h1>
+      <p>Explora las funcionalidades disponibles o añade un nuevo contacto.</p>
+  
+      <div class="home-card"> 
+        <h2>Contactos</h2>
 
+        <div class="contacts-content">
+          <app-card-contact/>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  
+
+  <!-- FAB flotante -->
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button>
       <ion-icon name="add"></ion-icon>
@@ -20,9 +35,10 @@
       <ion-fab-button (click)="logOut()">
         <ion-icon name="log-out"></ion-icon>
       </ion-fab-button>
-      <ion-fab-button>
+      <ion-fab-button (click)="addContact()">
         <ion-icon name="person-add"></ion-icon>
       </ion-fab-button>
     </ion-fab-list>
   </ion-fab>
+
 </ion-content>
