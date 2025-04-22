@@ -47,6 +47,10 @@ export class CardContactComponent implements OnInit {
   callContact(contact: Contact){
     
   }
+
+  openChat(contact: Contact){
+    
+  }
     
   
 }

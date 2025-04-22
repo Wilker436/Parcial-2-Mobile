@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-
+import { completeGuard } from './core/guards/complete-guard.guard';
 export const routes: Routes = [
   {
     path: '',
@@ -27,6 +27,7 @@ export const routes: Routes = [
   },
   {
     path: 'complete-profile',
+   /*  canActivate: [completeGuard], */
     loadComponent: () => import('./pages/complete-profile/complete-profile.page').then( m => m.CompleteProfilePage)
   },
 ];

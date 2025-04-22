@@ -1,0 +1,100 @@
+.add-contact-content {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    --background: linear-gradient(135deg, #a7d0ff, #1f1f4b);
+  }
+  
+  
+  /* Contenedor del formulario */
+  .add-contact-container {
+    width: 100%;
+    height: 100vh;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    opacity: 0;
+    transform: scale(0.95);
+    animation: zoomIn 1s ease-out forwards;
+  }
+  
+  @keyframes zoomIn {
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  /* Formulario */
+  .add-contact-form {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 500px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2% 5% 4% 5%;
+  }
+  
+  ion-list {
+    margin: 0;
+    background: transparent;
+  }
+  
+  ion-item {
+    --background: #f0f0f0;
+    --border-radius: 8px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  
+  ion-label {
+    color: #1f1f4b;
+    font-weight: 500;
+  }
+  
+  ion-input {
+    color: #333;
+  }
+  
+  /* Botón */
+  ion-button {
+    margin-top: 8px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+  
+  ion-button[type="submit"] {
+    --background: #4285f4;
+    --color: white;
+    box-shadow: 0 2px 8px rgba(31, 31, 75, 0.2);
+  }
+  
+  ion-button[type="submit"]:hover {
+    --background: #3b76d6;
+  }
+  
+  /* Responsivo */
+  @media (max-width: 500px) {
+    .add-contact-form {
+      width: 100%;
+      padding: 24px 16px;
+      border-radius: 8px;
+    }
+  }
+  
+  .back-button {
+    align-self: flex-start;
+    margin-bottom: 8px;
+    color: #1f1f4b;
+    font-weight: 500;
+    padding-left: 0;
+  }
+  

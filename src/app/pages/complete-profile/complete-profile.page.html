@@ -1,40 +1,56 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Completar perfil</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="complete-profile-content">
+  
+  <!-- Fondo con burbujas -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
 
-<ion-content class="ion-padding">
+  <!-- Contenedor del formulario -->
+  <div class="complete-profile-container">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="complete-profile-form">
+      
+      <!-- Botón de regreso -->
+      <ion-button fill="clear" class="back-button" (click)="goBack()" size="small">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        Volver
+      </ion-button>
 
-  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <h1>Completar perfil</h1>
 
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input formControlName="firstname" placeholder="Introduce tu nombre"></ion-input>
-    </ion-item>
+      <!-- Nombre -->
+      <ion-item>
+        <ion-label position="floating">Nombre</ion-label>
+        <ion-input formControlName="firstname" placeholder="Introduce tu nombre"></ion-input>
+      </ion-item>
 
-    <div *ngIf="profileForm.get('firstname')?.invalid && profileForm.get('firstname')?.touched" class="error-message">
-      El nombre es obligatorio.
-    </div>
+      <div *ngIf="profileForm.get('firstname')?.invalid && profileForm.get('firstname')?.touched" class="error-message">
+        El nombre es obligatorio.
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Teléfono</ion-label>
-      <ion-input formControlName="phone" placeholder="Introduce tu teléfono"></ion-input>
-    </ion-item>
+      <!-- Teléfono -->
+      <ion-item>
+        <ion-label position="floating">Teléfono</ion-label>
+        <ion-input formControlName="phone" placeholder="Introduce tu teléfono"></ion-input>
+      </ion-item>
 
-    <div *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched" class="error-message">
-      El teléfono es obligatorio.
-    </div>
+      <div *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched" class="error-message">
+        El teléfono es obligatorio.
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Imagen de perfil</ion-label>
-      <ion-input formControlName="picture" type="text"></ion-input>
-    </ion-item>
+      <!-- Imagen de perfil -->
+      <ion-item>
+        <ion-label position="floating">Imagen de perfil</ion-label>
+        <ion-input formControlName="picture" placeholder="URL de la imagen"></ion-input>
+      </ion-item>
 
-    <ion-button expand="block" type="submit" [disabled]="profileForm.invalid">
-      Guardar perfil
-    </ion-button>
+      <!-- Botón para guardar -->
+      <ion-button expand="block" type="submit" [disabled]="profileForm.invalid">
+        Guardar perfil
+      </ion-button>
 
-  </form>
+    </form>
+  </div>
 
 </ion-content>

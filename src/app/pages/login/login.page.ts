@@ -5,7 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonButt
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Router } from '@angular/router';
 import { LoginData } from '../../interfaces/user.interface';
-
+import { AuthFlowService } from 'src/app/core/services/auth-flow.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +22,8 @@ export class LoginPage implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private authFlowService: AuthFlowService
   ) {}
 
   ngOnInit() {}
@@ -58,7 +59,7 @@ export class LoginPage implements OnInit {
         const userDoc = await this.authService.getUserProfile(uid);
   
         if (!userDoc.exists()) {
-          // Si no existe, redirigir al formulario de completar perfil
+          this.authFlowService.setFromGoogleLogin(true);
           this.router.navigate(['/complete-profile']);
         } else {
           // Si existe, ir al home

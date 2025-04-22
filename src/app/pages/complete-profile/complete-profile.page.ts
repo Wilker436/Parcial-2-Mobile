@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators, NonNullableFormBuilder } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonItem, IonLabel, IonInput, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-complete-profile',
   templateUrl: './complete-profile.page.html',
   styleUrls: ['./complete-profile.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule, IonItem, IonLabel, IonInput, IonButton]
+  imports: [IonIcon, IonContent, CommonModule, FormsModule, ReactiveFormsModule, IonItem, IonLabel, IonInput, IonButton]
 })
 export class CompleteProfilePage implements OnInit {
 
@@ -54,6 +55,10 @@ export class CompleteProfilePage implements OnInit {
         console.error('No se encontró el usuario autenticado');
       }
     }
+  }
+
+  goBack(){
+
   }
   
 

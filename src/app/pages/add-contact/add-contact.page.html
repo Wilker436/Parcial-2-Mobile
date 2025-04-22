@@ -1,24 +1,37 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Register</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="add-contact-content">
 
-<ion-content [fullscreen]="true">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <ion-list>
-      <ion-item>
-        <ion-label position="floating">Nombre</ion-label>
-        <ion-input formControlName="name" type="text"></ion-input>
-      </ion-item>
+  <!-- Fondo con burbujas -->
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
 
-      <ion-item>
-        <ion-label position="floating">Numero de telefono</ion-label>
-        <ion-input formControlName="phone" type="tel"></ion-input>
-      </ion-item>
-    </ion-list>
+  <!-- Contenedor del formulario -->
+  <div class="add-contact-container">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="add-contact-form">
+      
+      <!-- Botón de regreso -->
+      <ion-button fill="clear" class="back-button" (click)="goBack()" size="small">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        Volver
+      </ion-button>
 
-    <ion-button type="submit">Registrar</ion-button>
-  </form>
+      <h1>Agregar contacto</h1>
+
+      <ion-list>
+        <ion-item>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input formControlName="name" type="text"></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="floating">Número de teléfono</ion-label>
+          <ion-input formControlName="phone" type="tel"></ion-input>
+        </ion-item>
+      </ion-list>
+
+      <ion-button type="submit" expand="block">Registrar</ion-button>
+    </form>
+  </div>
 </ion-content>
-
