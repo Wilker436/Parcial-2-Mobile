@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">parcial-2</string>
+    <string name="title_activity_main">parcial-2</string>
+    <string name="package_name">com.parcial2.app</string>
+    <string name="custom_url_scheme">com.parcial2.app</string>
+</resources>

@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { Router } from '@angular/router';
 import { LoginData } from '../../interfaces/user.interface';
 import { AuthFlowService } from 'src/app/core/services/auth-flow.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ export class LoginPage implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private authFlowService: AuthFlowService
+    private authFlowService: AuthFlowService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {}
@@ -35,19 +37,33 @@ export class LoginPage implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      this.errorMessage = null; // Limpiar errores previos
+      this.errorMessage = null;
       const credentials = this.form.value as LoginData;
-
+  
+      // Intentamos iniciar sesión
       this.authService.logIn(credentials)
-        .then(() => {
-          this.router.navigate(['/home']);
+        .then(async () => {
+          try {
+            // Guardamos el token en Firestore después de iniciar sesión
+            await this.notificationService.savePushTokenToFirestore();
+  
+            // Redirigir a la página principal después de obtener y guardar el token
+            this.router.navigate(['/home']);
+          } catch (error) {
+            // Manejo de errores al obtener o guardar el token
+            console.error('Error al obtener o guardar el token:', error);
+            this.errorMessage = 'Hubo un error al guardar el token. Por favor, intenta nuevamente.';
+          }
         })
         .catch(error => {
+          // Manejo de errores en el login
           console.error('Error en el login', error);
           this.errorMessage = this.getErrorMessage(error.code);
         });
     }
   }
+  
+  
 
   loginWithGoogle() {
     this.authService.logInGoogle()
