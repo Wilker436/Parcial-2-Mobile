@@ -1,51 +1,61 @@
 /* Estilos generales para la lista */
 ion-list {
-    padding: 0;
-    margin: 0;
-    background: transparent; /* Fondo transparente para no cubrir el fondo de la página */
-    display: flex;
-    flex-direction: column;
-    gap: 12px; /* Espacio entre los elementos */
-    z-index: 1000;
-  }
-  
-  /* Estilos de los items */
-.cartas{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap; /* Permite que los items se ajusten en varias filas */
-    gap: 12px; /* Espacio entre los elementos */
-    width: 100%;
-  }
-  
-  /* Estilo para cada item de contacto */
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  /* Fondo transparente para no cubrir el fondo de la página */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Espacio entre los elementos */
+  z-index: 1000;
+}
+
+/* Estilos de los items */
+.cartas {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  /* Permite que los items se ajusten en varias filas */
+  gap: 12px;
+  /* Espacio entre los elementos */
+  width: 100%;
+}
+
+/* Estilo para cada item de contacto */
 .contact-item {
-    background: #fff; /* Fondo blanco para los elementos */
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    padding: 12px;
-    margin-bottom: 8px;
-    transition: transform 0.3s ease; /* Animación para la interacción */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 49%;
-  }
-  
-  .options{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    flex-direction: column;
-  }
+  background: #fff;
+  /* Fondo blanco para los elementos */
+  border-radius: 8px;
+  /* Bordes redondeados */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* Sombra suave */
+  padding: 12px;
+  margin-bottom: 8px;
+  transition: transform 0.3s ease;
+  /* Animación para la interacción */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 49%;
+  overflow: hidden;
+}
+
+.options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-direction: column;
+}
 
 .contact-item:hover {
-    transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
-  }
-  
-  /* Estilo para los textos dentro de los items */
+  transform: translateY(-5px);
+  /* Efecto de elevación al pasar el mouse */
+}
+
+/* Estilo para los textos dentro de los items */
 /*   ion-label h2 {
     font-size: 18px;
     font-weight: 600;
@@ -58,119 +68,145 @@ ion-list {
     margin-top: 4px;
   }
    */
-.info{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 50%;
-    flex: 1;
-    margin-left: 10px;
+.info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  flex: 1;
+  margin-left: 10px;
 }
 
-  /* Estilo para los templates de "loading" y "noContacts" */
-  ng-template {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 16px;
-  }
-  
-  ion-item {
-    background: #f5f5f5; /* Fondo gris claro para el loading y sin contactos */
-    border-radius: 8px;
-    margin-bottom: 16px;
-  }
-  
-  ion-label h2 {
-    color: #888; /* Gris más suave para mensajes de carga */
-    font-size: 16px;
-    text-align: center;
-  }
-  
-  /* Estilo específico para el "Cargando contactos..." */
-  #loading ion-item {
-    background: #d8eaff; /* Fondo suave */
-    color: #444;
-    font-weight: 500;
-    font-size: 16px;
-  }
+/* Estilo para los templates de "loading" y "noContacts" */
+ng-template {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
 
-  .load{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-  
-  /* Estilo para "No tienes contactos registrados." */
-  #noContacts ion-item {
-    background: #f2f2f2; /* Fondo muy suave */
-    color: #555;
-    font-weight: 500;
-    font-size: 16px;
-  }
-  
+ion-item {
+  background: #f5f5f5;
+  /* Fondo gris claro para el loading y sin contactos */
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
 
-  /* Estilos para los botones dentro de los items */
+ion-label h2 {
+  color: #888;
+  /* Gris más suave para mensajes de carga */
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Estilo específico para el "Cargando contactos..." */
+#loading ion-item {
+  background: #d8eaff;
+  /* Fondo suave */
+  color: #444;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.load {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Estilo para "No tienes contactos registrados." */
+#noContacts ion-item {
+  background: #f2f2f2;
+  /* Fondo muy suave */
+  color: #555;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+
+/* Estilos para los botones dentro de los items */
 .ion-item-buttons {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-  
-  /* Estilo para los botones */
-  ion-button {
-    --background: transparent;
-    --border-radius: 8px;
-    --box-shadow: none;
-    color: #1f1f4b;
-  }
-  
-  ion-button:hover {
-    --background: #e6f7ff; /* Color suave en hover */
-  }
-  
-  ion-button ion-icon {
-    font-size: 20px;
-  }
-  
-  /* Botón de eliminar (trash-outline) */
-  ion-button:has(ion-icon[name='trash-outline']) {
-    color: #e74c3c; /* Rojo para el botón de eliminar */
-  }
-  
-  ion-button:has(ion-icon[name='trash-outline']):hover {
-    --background: #f8d7da; /* Fondo suave en hover */
-  }
-  
-  /* Botón de llamada (call-outline) */
-  ion-button:has(ion-icon[name='call-outline']) {
-    color: #2ecc71; /* Verde para el botón de llamada */
-  }
-  
-  ion-button:has(ion-icon[name='call-outline']):hover {
-    --background: #d4edda; /* Fondo suave en hover */
-  }
-  
-.imgC{
-    width: 100%;
-    height: auto;
-    display: flex;
-    justify-content: center;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
-ion-avatar{
+/* Estilo para los botones */
+ion-button {
+  --background: transparent;
+  --border-radius: 8px;
+  --box-shadow: none;
+  color: #1f1f4b;
+}
+
+ion-button:hover {
+  --background: #e6f7ff;
+  /* Color suave en hover */
+}
+
+ion-button ion-icon {
+  font-size: 20px;
+}
+
+/* Botón de eliminar (trash-outline) */
+ion-button:has(ion-icon[name='trash-outline']) {
+  color: #e74c3c;
+  /* Rojo para el botón de eliminar */
+}
+
+ion-button:has(ion-icon[name='trash-outline']):hover {
+  --background: #f8d7da;
+  /* Fondo suave en hover */
+}
+
+/* Botón de llamada (call-outline) */
+ion-button:has(ion-icon[name='call-outline']) {
+  color: #2ecc71;
+  /* Verde para el botón de llamada */
+}
+
+ion-button:has(ion-icon[name='call-outline']):hover {
+  --background: #d4edda;
+  /* Fondo suave en hover */
+}
+
+.imgC {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+}
+
+ion-avatar {
   width: 150px;
   height: 150px;
   display: block;
   border-radius: 50%;
   overflow: hidden;
 }
-  
+
+ion-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
+@media (max-width: 540px) {
+  ion-avatar {
+    width: 100px;
+    height: 100px;
+    display: block;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
   ion-avatar img {
     width: 100%;
     height: 100%;
@@ -178,48 +214,31 @@ ion-avatar{
     border-radius: 50%;
     display: block;
   }
-  
-@media (max-width: 540px) {
-  ion-avatar{
-    width: 100px;
-    height: 100px;
-    display: block;
-    border-radius: 50%;
-    overflow: hidden;
+
+
+  .contact-item {
+    width: 100%;
   }
-    
-    ion-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      display: block;
-    }
 
-
-    .contact-item {
-      width: 100%;
-    }
-    
 }
 
-@media (max-width: 370px) {
-  ion-avatar{
-    width: 80px;
-    height: 80px;
-    display: block;
-    border-radius: 50%;
-    overflow: hidden;
+@media (max-width: 430px) {
+  ion-avatar {
+    width: 70px;
+    height: 70px;
+
   }
-    
-    ion-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      display: block;
-    }
-    
+
+  ion-avatar img {
+    width: 100%;
+    height: 100%;
+  }
+
 }
- 
- 
+
+
+@media (max-width: 400px) {
+  .contact-item {
+    display: block;
+  }
+}

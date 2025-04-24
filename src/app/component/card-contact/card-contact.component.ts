@@ -5,7 +5,6 @@ import { Contact } from 'src/app/interfaces/contact.model';
 import { IonList, IonItem, IonLabel, IonButton, IonIcon, IonAvatar, IonSpinner } from "@ionic/angular/standalone";
 import { NgIf, NgForOf, AsyncPipe } from '@angular/common';
 
-
 @Component({
   selector: 'app-card-contact',
   templateUrl: './card-contact.component.html',
@@ -45,7 +44,6 @@ export class CardContactComponent implements OnInit {
   }
 
   callContact(contact: Contact){
-    
   }
 
   openChat(contact: Contact){

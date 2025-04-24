@@ -4,7 +4,7 @@ import { LoginData } from '../../interfaces/user.interface';
 
 import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { Firestore, doc, setDoc, getDoc } from '@angular/fire/firestore';
-
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +13,8 @@ export class AuthService {
 
   private token: string | null = null;
 
-  constructor(private firestore: Firestore) { 
-    this.listenToAuthState();
+  constructor(private firestore: Firestore, private httpService: HttpService) { 
+   /*  this.listenToAuthState(); */
   }
 
   private async listenToAuthState() {
@@ -35,9 +35,13 @@ export class AuthService {
     return getAuth();
   }
 
+
   async getToken(): Promise<string | null> {
-    const user = this.getAuth().currentUser;
-    return user ? await user.getIdToken() : null;
+    return this.httpService.findToken().toPromise().then((response) => {
+      console.log('Token desde el servidor:', response.data.access_token); 
+      localStorage.setItem('token', response.data.access_token); 
+      return response.data.access_token;
+    }) as Promise<string | null>;
   }
 
   async register(user: User) {

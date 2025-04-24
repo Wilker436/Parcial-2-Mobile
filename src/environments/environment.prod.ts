@@ -7,5 +7,9 @@ export const environment = {
     storageBucket: "parcial-2-df4bf.firebasestorage.app",
     messagingSenderId: "192921260273",
     appId: "1:192921260273:web:ab0d536f78327ab6a29950"
+  },
+  credentials:{
+    email: "wilker.pachecoperez@unicolombo.edo.co",
+    password: "wilker123W",
   }
 };
