@@ -5,6 +5,7 @@ export interface User {
     firstname: string;
     phone: string;
     picture?: string;
+    token?: string;
 }
 
 export interface LoginData {

@@ -95,5 +95,9 @@ export class AuthService {
   }
   
 
+  public async getUser(uid: string) {
+    return await getDoc(doc(this.firestore, 'users', uid))
+  }
+
 
 }

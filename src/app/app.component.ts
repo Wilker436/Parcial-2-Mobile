@@ -1,14 +1,7 @@
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
-import { Platform } from '@ionic/angular';
-import { NotificationService } from './core/services/notification.service';
-
-import {
-  ActionPerformed,
-  PushNotificationSchema,
-  PushNotifications,
-  Token,
-} from '@capacitor/push-notifications';
+import { Platform} from '@ionic/angular';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -18,11 +11,19 @@ import {
 export class AppComponent {
   
   constructor(
-    private platform: Platform,
-    private notificationService: NotificationService
+    private platform: Platform, private authService: AuthService
   ) {
    
   }
 
+  ngOnInit() {
+    this.platform.ready().then(() => {
+      this.authService.getToken().then((token) => {
+        console.log('Token obtenido al iniciar:', token);
+      }).catch(err => {
+        console.error('Error al obtener token al iniciar:', err);
+      });
+    });
+  }
 
 }
