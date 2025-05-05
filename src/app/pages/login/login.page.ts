@@ -28,7 +28,9 @@ export class LoginPage implements OnInit {
     private notificationService: NotificationService
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    
+  }
 
   form = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
