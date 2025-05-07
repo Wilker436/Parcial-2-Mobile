@@ -36,14 +36,6 @@ export class AuthService {
   }
 
 
-  async getToken(): Promise<string | null> {
-    return this.httpService.findToken().toPromise().then((response) => {
-      console.log('Token desde el servidor:', response.data.access_token); 
-      localStorage.setItem('token', response.data.access_token); 
-      return response.data.access_token;
-    }) as Promise<string | null>;
-  }
-
   async register(user: User) {
     try {
       const userCredential = await createUserWithEmailAndPassword(this.getAuth(), user.email, user.password);

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { Platform} from '@ionic/angular';
-import { AuthService } from './core/services/auth.service';
+import { HttpService } from './core/services/http.service';
 
 @Component({
   selector: 'app-root',
@@ -11,17 +11,16 @@ import { AuthService } from './core/services/auth.service';
 export class AppComponent {
   
   constructor(
-    private platform: Platform, private authService: AuthService
+    private platform: Platform, 
+    private httpService: HttpService, 
   ) {
    
   }
 
   ngOnInit() {
     this.platform.ready().then(() => {
-      this.authService.getToken().then((token) => {
-        console.log('Token obtenido al iniciar:', token);
-      }).catch(err => {
-        console.error('Error al obtener token al iniciar:', err);
+      this.httpService.setToken().then(() => {
+        console.log('Token set successfully');
       });
     });
   }

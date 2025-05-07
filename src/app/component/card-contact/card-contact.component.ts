@@ -104,12 +104,17 @@ export class CardContactComponent implements OnInit {
           }
         };
   
-        console.log('Enviando notificación:', JSON.stringify(notification, null, 2));
+        //console.log('Enviando notificación:', JSON.stringify(notification, null, 2));
   
         this.httpService.sendNotification(notification).subscribe({
-          next: (response) => console.log('Notificación enviada correctamente:', response),
-          error: (err) => console.error('Error al enviar la notificación:', err)
+          next: (response) => console.log('Notificación enviada correctamente:', response?.data ?? response),
+          error: (err) => {
+            console.error('Error al enviar la notificación:', err.response?.data ?? err);
+            console.error('Error al enviar la notificación:', err);
+            console.error('Error al enviar la notificación:', JSON.stringify(err, null, 2));
+          }
         });
+        
   
       }).catch(err => {
         console.error('Error al obtener los datos del contacto:', err);
