@@ -17,6 +17,12 @@ import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { HttpService } from 'src/app/core/services/http.service';
 import { v4 as uuidv4 } from 'uuid';
 
+import { VoiceRecorder } from 'capacitor-voice-recorder';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { SupabaseService } from 'src/app/core/services/supabase.service';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
+
+
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
@@ -30,6 +36,13 @@ export class ChatPage implements OnInit, OnDestroy {
   newMessage = '';
   currentUserId: string | null = null;
   private messagesSub!: Subscription;
+  isRecording = false;
+  recordingTime = 0;
+  recordingTimer: any;
+  audioBlob: Blob | null = null;
+  audioUrl: string | null = null;
+  selectedFile: { name: string, url: string, type: string } | null = null;
+  isSelectingFile = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -40,7 +53,7 @@ export class ChatPage implements OnInit, OnDestroy {
     private authService: AuthService,
     private firestore: Firestore,
     private httpService: HttpService,
-
+    private supabaseService: SupabaseService
   ) {
     this.currentUserId = this.auth.currentUser?.uid || null;
   }
@@ -74,10 +87,104 @@ export class ChatPage implements OnInit, OnDestroy {
       await this.chatService.sendMessage(this.contactId, this.newMessage);
       this.newMessage = '';
       this.scrollToBottom();
+
     } catch (error) {
       console.error('Error sending message:', error);
       // Puedes mostrar un toast o alerta al usuario
     }
+  }
+
+  async startRecording() {
+    try {
+      const { value: hasPermission } = await VoiceRecorder.requestAudioRecordingPermission();
+      if (!hasPermission) {
+        console.error('Permission denied for audio recording');
+        return;
+      }
+
+      this.isRecording = true;
+      this.recordingTime = 0;
+
+      // Iniciar temporizador
+      this.recordingTimer = setInterval(() => {
+        this.recordingTime++;
+      }, 1000);
+
+      await VoiceRecorder.startRecording();
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      this.stopRecording();
+    }
+  }
+
+  async stopRecording() {
+    try {
+      if (!this.isRecording) return;
+
+      this.isRecording = false;
+      clearInterval(this.recordingTimer);
+
+      const { value: recordingResult } = await VoiceRecorder.stopRecording();
+
+      if (recordingResult && recordingResult.recordDataBase64) {
+        this.audioBlob = this.base64ToBlob(recordingResult.recordDataBase64, 'audio/aac');
+        this.audioUrl = URL.createObjectURL(this.audioBlob);
+      }
+    } catch (error) {
+      console.error('Error stopping recording:', error);
+    }
+  }
+
+  async sendAudioMessage() {
+    if (!this.audioBlob) return;
+
+    try {
+      // Convertir Blob a File
+      const audioFile = new File([this.audioBlob], 'recording.aac', { type: 'audio/aac' });
+
+      // Subir a Supabase
+      const audioUrl = await this.supabaseService.uploadAudio(audioFile);
+
+      // Enviar mensaje con la URL del audio
+      await this.chatService.sendMessage(this.contactId, '', audioUrl);
+
+      // Limpiar
+      this.audioBlob = null;
+      if (this.audioUrl) {
+        URL.revokeObjectURL(this.audioUrl);
+        this.audioUrl = null;
+      }
+    } catch (error) {
+      console.error('Error sending audio message:', error);
+    }
+  }
+
+
+  cancelRecording() {
+    this.stopRecording();
+    this.audioBlob = null;
+    if (this.audioUrl) {
+      URL.revokeObjectURL(this.audioUrl);
+      this.audioUrl = null;
+    }
+  }
+
+  private base64ToBlob(base64: string, contentType: string): Blob {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: contentType });
+  }
+
+  formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
   scrollToBottom() {
@@ -88,6 +195,104 @@ export class ChatPage implements OnInit, OnDestroy {
       }
     }, 100);
   }
+
+async pickFile() {
+  try {
+    this.isSelectingFile = true;
+
+    // Intentar seleccionar el archivo
+    const result = await FilePicker.pickFiles({
+      types: [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'image/*',
+        'video/*',
+        'audio/*'
+      ],
+      limit: 1,
+      readData: true // Es crucial para obtener el archivo en base64
+    });
+
+    if (!result || result.files.length === 0) {
+      console.warn('No se seleccionó ningún archivo.');
+      return;
+    }
+
+    const file = result.files[0];
+
+    // Obtener MIME
+    const mimeType = file.mimeType || 'application/octet-stream';
+
+    // Convertir el base64 a blob
+    if (file.data) {
+      const byteCharacters = atob(file.data);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: mimeType });
+
+      // Crear el archivo
+      const rawFile = new File([blob], file.name, { type: mimeType });
+
+      // Subir el archivo a Supabase (adaptar según tu servicio)
+      const fileData = await this.supabaseService.uploadFile(rawFile);
+
+      this.selectedFile = {
+        name: fileData.name,
+        url: fileData.url,
+        type: fileData.type
+      };
+    } else {
+      console.warn('No se pudo leer el archivo seleccionado.');
+    }
+  } catch (error) {
+    console.error('Error al seleccionar archivo:', error);
+  } finally {
+    this.isSelectingFile = false;
+  }
+}
+
+
+
+
+  async sendFileMessage() {
+    if (!this.selectedFile) return;
+
+    try {
+      await this.chatService.sendMessage(
+        this.contactId,
+        '',
+        undefined,
+        {
+          url: this.selectedFile.url,
+          name: this.selectedFile.name,
+          type: this.selectedFile.type
+        }
+      );
+
+      // Limpiar
+      this.selectedFile = null;
+    } catch (error) {
+      console.error('Error al enviar archivo:', error);
+    }
+  }
+
+  cancelFileSelection() {
+    this.selectedFile = null;
+  }
+
+  getFileIcon(type: string): string {
+    if (type.includes('pdf')) return 'document-text-outline';
+    if (type.includes('word')) return 'document-text-outline';
+    if (type.includes('excel') || type.includes('sheet')) return 'document-text-outline';
+    return 'document-outline';
+  }
+
 
   ngOnDestroy() {
     if (this.messagesSub) {

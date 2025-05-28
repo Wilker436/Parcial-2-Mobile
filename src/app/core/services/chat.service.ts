@@ -4,6 +4,7 @@ import { Firestore, collection, addDoc, collectionData, doc, orderBy, query, upd
 import { Auth } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { FilePicker } from '@capawesome/capacitor-file-picker';
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +18,7 @@ export class ChatService {
 
 
 
-    async sendMessage(recipientId: string, text: string): Promise<void> {
+    async sendMessage(recipientId: string, text: string, audioUrl?: string, fileData?: { url: string, name: string, type: string }): Promise<void> {
         const currentUser = this.auth.currentUser;
         if (!currentUser) throw new Error('Usuario no autenticado');
 
@@ -29,13 +30,27 @@ export class ChatService {
         const senderMessagesRef = collection(this.firestore, `${senderChatPath}/messages`);
         const recipientMessagesRef = collection(this.firestore, `${recipientChatPath}/messages`);
 
-        // 3. Crear el mensaje
-        const newMessage = {
-            text,
+        // 3. Crear el mensaje con soporte para audio y archivos
+        const newMessage: any = {
             senderId: currentUser.uid,
             timestamp: new Date(),
             status: 'delivered'
         };
+
+        // Asignar contenido según el tipo de mensaje
+        if (audioUrl) {
+            newMessage.type = 'audio';
+            newMessage.audioUrl = audioUrl;
+            newMessage.duration = await this.getAudioDuration(audioUrl);
+        } else if (fileData) {
+            newMessage.type = 'file';
+            newMessage.fileUrl = fileData.url;
+            newMessage.fileName = fileData.name;
+            newMessage.fileType = fileData.type;
+        } else {
+            newMessage.type = 'text';
+            newMessage.text = text;
+        }
 
         const batch = writeBatch(this.firestore);
 
@@ -51,18 +66,30 @@ export class ChatService {
         }, { merge: true });
 
         // 5. Agregar mensajes a ambas conversaciones
-        batch.set(doc(senderMessagesRef), newMessage);
-        batch.set(doc(recipientMessagesRef), newMessage);
+        const newMessageRef = doc(senderMessagesRef);
+        batch.set(newMessageRef, newMessage);
+        batch.set(doc(recipientMessagesRef, newMessageRef.id), newMessage);
 
         // 6. Actualizar metadatos de último mensaje
+        let lastMessageText = '';
+        if (audioUrl) {
+            lastMessageText = 'Mensaje de audio';
+        } else if (fileData) {
+            lastMessageText = `Archivo: ${fileData.name}`;
+        } else {
+            lastMessageText = text;
+        }
+
         batch.update(doc(this.firestore, senderChatPath), {
-            lastMessage: text,
-            lastMessageTime: new Date()
+            lastMessage: lastMessageText,
+            lastMessageTime: new Date(),
+            lastMessageType: newMessage.type
         });
 
         batch.update(doc(this.firestore, recipientChatPath), {
-            lastMessage: text,
-            lastMessageTime: new Date()
+            lastMessage: lastMessageText,
+            lastMessageTime: new Date(),
+            lastMessageType: newMessage.type
         });
 
         try {
@@ -72,7 +99,20 @@ export class ChatService {
             throw new Error('Error al enviar mensaje');
         }
     }
-    
+
+    private async getAudioDuration(audioUrl: string): Promise<number> {
+        return new Promise((resolve) => {
+            const audio = new Audio();
+            audio.src = audioUrl;
+            audio.onloadedmetadata = () => {
+                resolve(Math.round(audio.duration));
+            };
+            audio.onerror = () => {
+                resolve(0); // Valor por defecto si hay error
+            };
+        });
+    }
+
     // Obtener mensajes de un chat
     getMessages(chatId: string): Observable<any[]> {
         const currentUser = this.auth.currentUser;

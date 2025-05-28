@@ -27,30 +27,104 @@
 <ion-content [fullscreen]="true" class="chat-container">
   <!-- Mensajes -->
   <div class="message-list">
-    <!-- Mensajes dinámicos -->
     <div *ngFor="let message of messages" class="message" [class.received]="message.senderId !== currentUserId"
       [class.sent]="message.senderId === currentUserId">
-      <div class="message-content">
+
+      <!-- Mensaje de texto -->
+      <div *ngIf="message.type === 'text'" class="message-content">
         <p>{{ message.text }}</p>
       </div>
+
+      <!-- Mensaje de audio -->
+      <div *ngIf="message.type === 'audio'" class="message-content audio-message">
+        <audio controls>
+          <source [src]="message.audioUrl" type="audio/aac">
+          Tu navegador no soporta el elemento de audio.
+        </audio>
+      </div>
+
+      <!-- Mensaje de archivo -->
+      <div *ngIf="message.type === 'file'" class="message-content file-message">
+        <ion-icon [name]="getFileIcon(message.fileType)"></ion-icon>
+        <div class="file-info">
+          <a [href]="message.fileUrl" target="_blank" download="{{message.fileName}}">
+            {{ message.fileName }}
+          </a>
+        </div>
+      </div>
+
       <span class="message-time">
         {{ message.timestamp?.toDate() | date:'shortTime' }}
       </span>
     </div>
   </div>
 
-  <!-- Input para enviar mensajes -->
-  <ion-footer class="message-input">
-    <ion-toolbar>
-      <ion-item lines="none">
-        <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"
-          (keyup.enter)="sendMessage()"></ion-input>
-        <ion-buttons slot="end">
-          <ion-button fill="clear" color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+  <!-- Grabación en curso -->
+  <div *ngIf="isRecording" class="recording-overlay">
+    <div class="recording-container">
+      <div class="recording-indicator">
+        <div class="pulse"></div>
+        <ion-icon name="mic" class="mic-icon"></ion-icon>
+      </div>
+      <div class="recording-time">{{ formatTime(recordingTime) }}</div>
+      <ion-button fill="clear" color="danger" (click)="cancelRecording()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="success" (click)="stopRecording()">
+        <ion-icon name="checkmark"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Vista previa del audio grabado -->
+  <div *ngIf="audioUrl && !isRecording" class="audio-preview">
+    <audio [src]="audioUrl" controls></audio>
+    <div class="audio-preview-actions">
+      <ion-button fill="clear" color="danger" (click)="cancelRecording()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="primary" (click)="sendAudioMessage()">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <div *ngIf="selectedFile" class="file-preview">
+    <div class="file-info">
+        <ion-icon [name]="getFileIcon(selectedFile.type)"></ion-icon>
+        <span class="file-name">{{ selectedFile.name }}</span>
+    </div>
+    <div class="file-actions">
+        <ion-button fill="clear" color="danger" (click)="cancelFileSelection()">
+            <ion-icon name="close"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" color="primary" (click)="sendFileMessage()">
             <ion-icon name="send"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-item>
+        </ion-button>
+    </div>
+</div>
+
+  <!-- Input para enviar mensajes -->
+<ion-footer class="message-input">
+    <ion-toolbar>
+        <ion-item lines="none">
+            <ion-buttons slot="start">
+                <ion-button fill="clear" (click)="startRecording()" *ngIf="!isRecording && !audioUrl">
+                    <ion-icon name="mic" color="primary"></ion-icon>
+                </ion-button>
+                <ion-button fill="clear" (click)="pickFile()" [disabled]="isSelectingFile">
+                    <ion-icon name="attach" color="primary"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+
+            <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"
+                (keyup.enter)="sendMessage()"></ion-input>
+
+            <ion-buttons slot="end">
+                <ion-button fill="clear" color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+                    <ion-icon name="send"></ion-icon>
+                </ion-button>
+            </ion-buttons>
+        </ion-item>
     </ion-toolbar>
-  </ion-footer>
-</ion-content>
+</ion-footer>
