@@ -2,7 +2,7 @@
   <ng-container *ngIf="contacts$ | async as contacts; else loading">
     <ng-container *ngIf="contacts.length > 0; else noContacts">
       <div class="cartas">
-        <div *ngFor="let contact of contacts" class="contact-item">
+        <div *ngFor="let contact of contacts" class="contact-item" (click)="openChat(contact)">
 
           <!-- Foto de perfil -->
           <div class="imgC">
@@ -10,32 +10,37 @@
               <img src="{{ contact.picture }}" alt="Foto de {{ contact.name }}">
             </ion-avatar>
           </div>
-  
-  
+
+
           <div class="options">
-              <!--  Informacion del contacto   -->      
-              <div class="info">
-                <h2>{{ contact.name }}</h2>
-                <p>{{ contact.number }}</p>
-              </div>
-  
-              <!-- Botones de acción -->
-              <div class="ion-item-buttons">
+            <!--  Informacion del contacto   -->
+            <div class="info">
+              <h2>{{ contact.name }}</h2>
+              <!-- <p>{{ contact.number }}</p> -->
+            </div>
+
+            <div class="LastMessage">
+              hola
+            </div>
+            
+            <!-- Botones de acción -->
+            <!--  <div class="ion-item-buttons">
                 <ion-button fill="clear" (click)="deleteContact(contact)">
                   <ion-icon name="trash-outline"></ion-icon>
-                </ion-button>
+                </ion-button> 
                 <ion-button fill="clear" (click)="callContact(contact)">
                   <ion-icon name="call-outline"></ion-icon>
                 </ion-button>
                 <ion-button fill="clear" (click)="openChat(contact)">
                   <ion-icon name="chatbox-ellipses-outline"></ion-icon>
                 </ion-button>
-              </div>
-  
+              </div> -->
           </div>
-  
-  
-  
+
+          <div class="badge">
+                <ion-badge slot="end">1</ion-badge>
+          </div>
+
         </div>
 
       </div>

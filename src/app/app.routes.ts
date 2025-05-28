@@ -30,4 +30,9 @@ export const routes: Routes = [
    /*  canActivate: [completeGuard], */
     loadComponent: () => import('./pages/complete-profile/complete-profile.page').then( m => m.CompleteProfilePage)
   },
+  {
+    path: 'chat/:id',
+    loadComponent: () => import('./pages/chat/chat.page').then( m => m.ChatPage)
+  },
+
 ];

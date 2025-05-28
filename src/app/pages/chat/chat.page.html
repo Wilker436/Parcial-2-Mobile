@@ -1,0 +1,56 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <div class="header-content" *ngIf="contactInfo">
+      <ion-avatar slot="start" class="header-avatar">
+        <img [src]="contactInfo.picture">
+      </ion-avatar>
+      <ion-title class="header-title">{{ contactInfo.name }}</ion-title>
+    </div>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="callContact(contactInfo)">
+        <ion-icon name="call-outline"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <ion-icon name="ellipsis-vertical"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="chat-container">
+  <!-- Mensajes -->
+  <div class="message-list">
+    <!-- Mensajes dinámicos -->
+    <div *ngFor="let message of messages" class="message" [class.received]="message.senderId !== currentUserId"
+      [class.sent]="message.senderId === currentUserId">
+      <div class="message-content">
+        <p>{{ message.text }}</p>
+      </div>
+      <span class="message-time">
+        {{ message.timestamp?.toDate() | date:'shortTime' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Input para enviar mensajes -->
+  <ion-footer class="message-input">
+    <ion-toolbar>
+      <ion-item lines="none">
+        <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"
+          (keyup.enter)="sendMessage()"></ion-input>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+            <ion-icon name="send"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
+    </ion-toolbar>
+  </ion-footer>
+</ion-content>

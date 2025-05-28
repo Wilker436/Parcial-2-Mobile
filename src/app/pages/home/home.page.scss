@@ -69,7 +69,11 @@ ion-fab-button::part(native):active::after {
  
 @media (max-width: 5600px) {
   .home-container {
-    margin: 20px;
+    margin: 10px;
+  }
+
+  .home-container-content{
+    padding: 20px 2px 20px 2px;
   }
   
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, doc, getDocs, query, where, setDoc, getDoc, collectionData } from '@angular/fire/firestore';
+import { Firestore, collection, doc, getDocs, query, where, setDoc, getDoc, collectionData, docData } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { Contact } from 'src/app/interfaces/contact.model';
 import { Observable } from 'rxjs';
@@ -71,5 +71,17 @@ export class ContactService {
     return collectionData(contactsRef, { idField: 'Contactid' }) as Observable<Contact[]>;
   }
   
+
+getContactById(contactId: string): Observable<Contact> {
+    const currentUser = this.auth.currentUser;
+    if (!currentUser) {
+      throw new Error('Usuario no autenticado');
+    }
+    
+    const contactRef = doc(this.firestore, `users/${currentUser.uid}/contacts/${contactId}`);
+    
+    // Esto devuelve un Observable que se actualiza en tiempo real para un solo documento
+    return docData(contactRef, { idField: 'Contactid' }) as Observable<Contact>;
+}
   
 }

@@ -1,0 +1,110 @@
+/* Estilo general del contenedor */
+/* Estilos para el encabezado */
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+.header-avatar {
+  width: 36px;
+  height: 36px;
+}
+
+.header-title {
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-size: 1.1rem;
+}
+
+/* Ajustes para el toolbar */
+ion-toolbar {
+  --background: #69abf7;
+  display: flex;
+  align-items: center;
+}
+
+.chat-container {
+    background: linear-gradient(135deg, #a7d0ff, #1f1f4b);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    /* Ocupa toda la altura de la pantalla */
+    padding: 0;
+    margin: 0;
+}
+
+
+/* Lista de mensajes */
+.message-list {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    padding: 10px;
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 70px;
+    background: linear-gradient(135deg, #a7d0ff, #1f1f4b);
+}
+
+/* Estilo base para mensajes */
+.message {
+    max-width: 70%;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    position: relative;
+
+    .message-content p {
+        margin: 0;
+        font-size: 14px;
+        color: #333;
+    }
+
+
+    &.received {
+        align-self: flex-start;
+        background: var(--ion-color-light);
+        border-bottom-left-radius: 4px;
+    }
+
+    &.sent {
+        align-self: flex-end;
+        background: #a7d0ff;
+        color: rgb(3, 3, 3);
+        border-bottom-right-radius: 4px;
+    }
+}
+
+.message-time {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    display: block;
+    text-align: right;
+    margin-top: 4px;
+}
+
+
+
+/* Input de mensajes (footer fijo) */
+.message-input {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    z-index: 10;
+    /* Asegura que esté por encima del contenido */
+    background: #f0f0f0;
+    /* Mismo color que el toolbar */
+
+    ion-toolbar {
+        --background: #f0f0f0;
+        padding: 5px;
+    }
+
+    ion-item {
+        --background: #ffffff;
+        border-radius: 20px
+    }
+}

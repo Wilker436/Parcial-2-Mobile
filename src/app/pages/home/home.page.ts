@@ -5,13 +5,14 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonIcon, IonFabLis
 import { AuthService } from 'src/app/core/services/auth.service';
 import { Router } from '@angular/router';
 import { CardContactComponent } from 'src/app/component/card-contact/card-contact.component';
+import { BurblesComponent } from 'src/app/component/burbles/burbles.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
   standalone: true,
-  imports: [IonFabButton, IonFabList, IonIcon, IonFab, IonContent, CommonModule, FormsModule, CardContactComponent]
+  imports: [IonFabButton, IonFabList, IonIcon, IonFab, IonContent, CommonModule, FormsModule, CardContactComponent, BurblesComponent]
 })
 export class HomePage implements OnInit {
 
