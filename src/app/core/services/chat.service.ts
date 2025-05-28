@@ -127,4 +127,80 @@ export class ChatService {
 
         return collectionData(q, { idField: 'id' }) as Observable<any[]>;
     }
+
+     async sendImageMessage(recipientId: string, imageUrl: string): Promise<void> {
+        const currentUser = this.auth.currentUser;
+        if (!currentUser) throw new Error('Usuario no autenticado');
+
+        const newMessage = {
+            senderId: currentUser.uid,
+            timestamp: new Date(),
+            status: 'delivered',
+            type: 'image',
+            imageUrl: imageUrl
+        };
+
+        await this.sendMessageWithMetadata(recipientId, newMessage, 'Imagen');
+    }
+
+        async sendLocationMessage(recipientId: string, location: { lat: number, lng: number }): Promise<void> {
+        const currentUser = this.auth.currentUser;
+        if (!currentUser) throw new Error('Usuario no autenticado');
+
+        const newMessage = {
+            senderId: currentUser.uid,
+            timestamp: new Date(),
+            status: 'delivered',
+            type: 'location',
+            location: location,
+            mapUrl: `https://maps.google.com/?q=${location.lat},${location.lng}`
+        };
+
+        await this.sendMessageWithMetadata(recipientId, newMessage, 'Ubicación compartida');
+    }
+
+    private async sendMessageWithMetadata(recipientId: string, message: any, lastMessageText: string): Promise<void> {
+        const currentUser = this.auth.currentUser;
+        if (!currentUser) return;
+
+        const senderChatPath = `users/${currentUser.uid}/chats/${recipientId}`;
+        const recipientChatPath = `users/${recipientId}/chats/${currentUser.uid}`;
+
+        const batch = writeBatch(this.firestore);
+
+        // Asegurar que existan los documentos de chat
+        batch.set(doc(this.firestore, senderChatPath), {
+            lastUpdated: new Date(),
+            participants: [currentUser.uid, recipientId]
+        }, { merge: true });
+
+        batch.set(doc(this.firestore, recipientChatPath), {
+            lastUpdated: new Date(),
+            participants: [currentUser.uid, recipientId]
+        }, { merge: true });
+
+        // Agregar mensaje
+        const senderMessagesRef = collection(this.firestore, `${senderChatPath}/messages`);
+        const recipientMessagesRef = collection(this.firestore, `${recipientChatPath}/messages`);
+        
+        const newMessageRef = doc(senderMessagesRef);
+        batch.set(newMessageRef, message);
+        batch.set(doc(recipientMessagesRef, newMessageRef.id), message);
+
+        // Actualizar metadatos
+        batch.update(doc(this.firestore, senderChatPath), {
+            lastMessage: lastMessageText,
+            lastMessageTime: new Date(),
+            lastMessageType: message.type
+        });
+
+        batch.update(doc(this.firestore, recipientChatPath), {
+            lastMessage: lastMessageText,
+            lastMessageTime: new Date(),
+            lastMessageType: message.type
+        });
+
+        await batch.commit();
+    }
+
 }

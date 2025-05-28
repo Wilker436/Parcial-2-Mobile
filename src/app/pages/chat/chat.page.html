@@ -53,6 +53,26 @@
         </div>
       </div>
 
+      <!-- Mensaje de imagen -->
+      <div *ngIf="message.type === 'image'" class="message-content image-message">
+        <img [src]="message.imageUrl" class="message-image">
+      </div>
+
+      <!-- Mensaje de ubicaciÃ³n -->
+      <div *ngIf="message.type === 'location'" class="message-content location-message">
+        <div class="map-container">
+          <iframe [src]="getSafeMapUrl(message.location.lat, message.location.lng)" frameborder="0" style="border:0"
+            allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+        <div class="location-actions">
+          <ion-button fill="clear" size="small" (click)="openInMaps(message.location.lat, message.location.lng)">
+            <ion-icon name="open-outline" slot="start"></ion-icon>
+            Abrir en Maps
+          </ion-button>
+        </div>
+      </div>
+
       <span class="message-time">
         {{ message.timestamp?.toDate() | date:'shortTime' }}
       </span>
@@ -89,42 +109,108 @@
     </div>
   </div>
 
+  <!-- Vista previa de imagen -->
+  <div *ngIf="selectedImage" class="image-preview">
+    <img [src]="selectedImage.url" class="preview-image">
+    <div class="image-preview-actions">
+      <ion-button fill="clear" color="danger" (click)="cancelImageSelection()">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="primary" (click)="sendImageMessage()">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Vista previa de ubicación -->
+  <div *ngIf="selectedLocation" class="location-preview">
+    <div class="map-container">
+      <iframe
+        [src]="'https://maps.google.com/maps?q=' + selectedLocation.lat + ',' + selectedLocation.lng + '&z=15&output=embed'"
+        frameborder="0" style="border:0" allowfullscreen>
+      </iframe>
+    </div>
+    <div class="location-preview-actions">
+      <ion-button fill="clear" color="danger" (click)="cancelLocationSelection()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="primary" (click)="sendLocationMessage()">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
   <div *ngIf="selectedFile" class="file-preview">
     <div class="file-info">
-        <ion-icon [name]="getFileIcon(selectedFile.type)"></ion-icon>
-        <span class="file-name">{{ selectedFile.name }}</span>
+      <ion-icon [name]="getFileIcon(selectedFile.type)"></ion-icon>
+      <span class="file-name">{{ selectedFile.name }}</span>
     </div>
     <div class="file-actions">
-        <ion-button fill="clear" color="danger" (click)="cancelFileSelection()">
-            <ion-icon name="close"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" color="primary" (click)="sendFileMessage()">
-            <ion-icon name="send"></ion-icon>
-        </ion-button>
+      <ion-button fill="clear" color="danger" (click)="cancelFileSelection()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="primary" (click)="sendFileMessage()">
+        <ion-icon name="send"></ion-icon>
+      </ion-button>
     </div>
-</div>
+  </div>
 
   <!-- Input para enviar mensajes -->
-<ion-footer class="message-input">
+  <!-- Input para enviar mensajes -->
+  <ion-footer class="message-input">
     <ion-toolbar>
-        <ion-item lines="none">
-            <ion-buttons slot="start">
-                <ion-button fill="clear" (click)="startRecording()" *ngIf="!isRecording && !audioUrl">
-                    <ion-icon name="mic" color="primary"></ion-icon>
-                </ion-button>
-                <ion-button fill="clear" (click)="pickFile()" [disabled]="isSelectingFile">
-                    <ion-icon name="attach" color="primary"></ion-icon>
-                </ion-button>
-            </ion-buttons>
+      <ion-item lines="none">
+        <ion-buttons slot="start">
+          <ion-button fill="clear" (click)="startRecording()" *ngIf="!isRecording && !audioUrl">
+            <ion-icon name="mic" color="primary"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" (click)="setOpen(true)">
+            <ion-icon name="attach" color="primary"></ion-icon>
+          </ion-button>
+        </ion-buttons>
 
-            <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"
-                (keyup.enter)="sendMessage()"></ion-input>
+        <ion-input [(ngModel)]="newMessage" placeholder="Escribe un mensaje..." type="text"
+          (keyup.enter)="sendMessage()"></ion-input>
 
-            <ion-buttons slot="end">
-                <ion-button fill="clear" color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()">
-                    <ion-icon name="send"></ion-icon>
-                </ion-button>
-            </ion-buttons>
-        </ion-item>
+        <ion-buttons slot="end">
+          <ion-button fill="clear" color="primary" (click)="sendMessage()" [disabled]="!newMessage.trim()">
+            <ion-icon name="send"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-item>
     </ion-toolbar>
-</ion-footer>
+
+    <ion-modal [isOpen]="isModalOpen" cssClass="custom-modal">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Adjuntar</ion-title>
+            <ion-buttons slot="end">
+              <ion-button (click)="setOpen(false)">Close</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <ion-list>
+            <ion-item button (click)="takePhoto(); setOpen(false)">
+              <ion-icon slot="start" name="camera-outline"></ion-icon>
+              <ion-label>Tomar foto</ion-label>
+            </ion-item>
+            <ion-item button (click)="pickFromGallery(); setOpen(false)">
+              <ion-icon slot="start" name="image-outline"></ion-icon>
+              <ion-label>Elegir de galería</ion-label>
+            </ion-item>
+            <ion-item button (click)="pickFile(); setOpen(false)">
+              <ion-icon slot="start" name="document-outline"></ion-icon>
+              <ion-label>Documento</ion-label>
+            </ion-item>
+            <ion-item button (click)="getCurrentLocation(); setOpen(false)">
+              <ion-icon slot="start" name="location-outline"></ion-icon>
+              <ion-label>Ubicación</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+
+  </ion-footer>

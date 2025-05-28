@@ -4,7 +4,7 @@ import { Auth } from '@angular/fire/auth';
 import { ContactService } from 'src/app/core/services/contact.service';
 import { ChatService } from 'src/app/core/services/chat.service';
 import { Subscription } from 'rxjs';
-import { IonHeader, IonFooter, IonToolbar, IonItem, IonInput, IonButtons, IonButton, IonIcon, IonAvatar, IonTitle, IonContent } from "@ionic/angular/standalone";
+import { IonHeader, IonFooter, IonToolbar, IonItem, IonInput, IonButtons, IonButton, IonIcon, IonAvatar, IonTitle, IonContent, IonModal, IonList, IonLabel } from "@ionic/angular/standalone";
 import { BurblesComponent } from 'src/app/component/burbles/burbles.component';
 import { NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
@@ -22,12 +22,17 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import { SupabaseService } from 'src/app/core/services/supabase.service';
 import { FilePicker } from '@capawesome/capacitor-file-picker';
 
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Geolocation } from '@capacitor/geolocation';
+import { ActionSheetController } from '@ionic/angular';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
-  imports: [IonContent, IonTitle, IonAvatar, IonIcon, IonHeader, IonFooter, IonToolbar, IonItem, IonInput, IonButtons, IonButton, BurblesComponent, CommonModule, FormsModule]
+  imports: [IonLabel, IonList, IonModal, IonContent, IonTitle, IonAvatar, IonIcon, IonHeader, IonFooter, IonToolbar, IonItem, IonInput, IonButtons, IonButton, BurblesComponent, CommonModule, FormsModule]
 })
 export class ChatPage implements OnInit, OnDestroy {
   contactId!: string;
@@ -43,6 +48,9 @@ export class ChatPage implements OnInit, OnDestroy {
   audioUrl: string | null = null;
   selectedFile: { name: string, url: string, type: string } | null = null;
   isSelectingFile = false;
+  showAttachmentOptions = false;
+  selectedImage: { url: string, name: string } | null = null;
+  selectedLocation: { lat: number, lng: number } | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,7 +61,9 @@ export class ChatPage implements OnInit, OnDestroy {
     private authService: AuthService,
     private firestore: Firestore,
     private httpService: HttpService,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private actionSheetCtrl: ActionSheetController,
+     private sanitizer: DomSanitizer
   ) {
     this.currentUserId = this.auth.currentUser?.uid || null;
   }
@@ -69,6 +79,134 @@ export class ChatPage implements OnInit, OnDestroy {
     // Cargar mensajes existentes
     this.loadMessages();
   }
+
+
+  isModalOpen = false;
+
+  setOpen(isOpen: boolean) {
+    this.isModalOpen = isOpen;
+  }
+  
+    async takePhoto() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Camera
+      });
+
+      if (image.dataUrl) {
+        // Convertir DataURL a Blob
+        const blob = this.dataURLtoBlob(image.dataUrl);
+        const file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+        // Subir a Supabase
+        const fileData = await this.supabaseService.uploadFile(file);
+        
+        this.selectedImage = {
+          url: fileData.url,
+          name: file.name
+        };
+      }
+    } catch (error) {
+      console.error('Error al tomar foto:', error);
+    }
+  }
+
+   async pickFromGallery() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Photos
+      });
+
+      if (image.dataUrl) {
+        // Convertir DataURL a Blob
+        const blob = this.dataURLtoBlob(image.dataUrl);
+        const file = new File([blob], `image_${Date.now()}.jpg`, { type: 'image/jpeg' });
+
+        // Subir a Supabase
+        const fileData = await this.supabaseService.uploadFile(file);
+        
+        this.selectedImage = {
+          url: fileData.url,
+          name: file.name
+        };
+      }
+    } catch (error) {
+      console.error('Error al seleccionar imagen:', error);
+    }
+  }
+
+  async getCurrentLocation() {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition();
+      
+      this.selectedLocation = {
+        lat: coordinates.coords.latitude,
+        lng: coordinates.coords.longitude
+      };
+    } catch (error) {
+      console.error('Error al obtener ubicación:', error);
+      // Mostrar mensaje de error al usuario
+    }
+  }
+    async sendImageMessage() {
+    if (!this.selectedImage) return;
+
+    try {
+      await this.chatService.sendImageMessage(this.contactId, this.selectedImage.url);
+      this.selectedImage = null;
+    } catch (error) {
+      console.error('Error al enviar imagen:', error);
+    }
+  }
+
+  async sendLocationMessage() {
+    if (!this.selectedLocation) return;
+
+    try {
+      await this.chatService.sendLocationMessage(this.contactId, this.selectedLocation);
+      this.selectedLocation = null;
+    } catch (error) {
+      console.error('Error al enviar ubicación:', error);
+    }
+  }
+
+  cancelImageSelection() {
+    this.selectedImage = null;
+  }
+
+  cancelLocationSelection() {
+    this.selectedLocation = null;
+  }
+
+  private dataURLtoBlob(dataurl: string): Blob {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    
+    return new Blob([u8arr], { type: mime });
+  }
+
+  
+  getSafeMapUrl(lat: number, lng: number): SafeResourceUrl {
+  const url = `https://maps.google.com/maps?q=${lat},${lng}&z=15&output=embed&t=m`;
+  return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+}
+
+openInMaps(lat: number, lng: number) {
+  window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+}
 
   loadMessages() {
     this.messagesSub = this.chatService.getMessages(this.contactId).subscribe({
@@ -200,7 +338,6 @@ async pickFile() {
   try {
     this.isSelectingFile = true;
 
-    // Intentar seleccionar el archivo
     const result = await FilePicker.pickFiles({
       types: [
         'application/pdf',
@@ -213,7 +350,7 @@ async pickFile() {
         'audio/*'
       ],
       limit: 1,
-      readData: true // Es crucial para obtener el archivo en base64
+      readData: true 
     });
 
     if (!result || result.files.length === 0) {

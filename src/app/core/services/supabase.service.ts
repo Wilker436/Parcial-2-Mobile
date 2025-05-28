@@ -63,4 +63,29 @@ export class SupabaseService {
         type: file.type
     };
 }
+
+// supabase.service.ts (actualización)
+async uploadImage(file: File): Promise<{ url: string, name: string }> {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Math.random()}.${fileExt}`;
+  const filePath = `${fileName}`;
+
+  const { data, error } = await this.supabase
+    .storage
+    .from('images') // Cambia 'images' por tu bucket de Supabase
+    .upload(filePath, file);
+
+  if (error) throw error;
+
+  // Obtener URL pública
+  const { data: { publicUrl } } = this.supabase
+    .storage
+    .from('images')
+    .getPublicUrl(filePath);
+
+  return {
+    url: publicUrl,
+    name: file.name
+  };
+}
 }
